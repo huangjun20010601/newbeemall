@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <br>
+    wangEditor富文本编辑器
+    <br>
+    <div id="wangEditor"></div>
+    <br>
+    <input type="button" onclick="getContent()" value="获取文档内容">
+</body>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/wangeditor@latest/dist/wangEditor.min.js"></script>
+<script>
+    //初始化富文本编辑器start
+    const E = window.wangEditor;
+    const editorD = new E("#wangEditor");
+    //设置编辑区域高度为640px
+    editorD.config.height = 640;
+    //配置服务端图片上传地址
+    editorD.config.uploadImgServer = "/upload";
+    editorD.config.uploadFileName = "file";
+    //限制图片大小2MB
+    editorD.config.uploadImgMaxSize = 2  * 1024 * 1024;
+    //限制一次最多能传5张图片
+    editorD.config.uploadImgMaxLength = 5;
+    //隐藏插入网络图片的功能
+    editorD.config.showLinkImg=false;
+    editorD.create();
+
+    function getContent(){
+        var content = editorD.txt.html();
+        alert(content);
+    }
+</script>
+</html>

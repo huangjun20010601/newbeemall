@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ltd.newbee.mall.dao.NewBeeMallShoppingCartItemMapper">
+<!--    配置表结构和实体类的对应关系-->
+    <resultMap id="BaseResultMap" type="ltd.newbee.mall.entity.NewBeeMallShoppingCartItem">
+        <id column="cart_item_id" jdbcType="BIGINT" property="cartItemId"></id>
+        <result column="user_id" jdbcType="BIGINT" property="userId"></result>
+        <result column="goods_id" jdbcType="BIGINT" property="goodsId"></result>
+        <result column="goods_count" jdbcType="INTEGER" property="goodsCount"></result>
+        <result column="is_deleted" jdbcType="TINYINT" property="isDeleted"></result>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"></result>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"></result>
+    </resultMap>
+    <sql id="Base_Column_List">
+        cart_item_id,user_id,goods_id,goods_count,is_deleted,create_time,update_time
+    </sql>
+
+    <select id="selectByUserIdAndGoodsId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from tb_newbee_mall_shopping_cart_item
+        where user_id = #{newBeeMallUserId,jdbcType=BIGINT} and goods_id = #{goodsId,jdbcType=BIGINT} and is_deleted = 0
+        limit 1
+    </select>
+
+    <select id="selectCountByUserId" resultType="int" parameterType="Long">
+        select count(*) from tb_newbee_mall_shopping_cart_item
+        where user_id = #{newBeeMallUserId,jdbcType=BIGINT} and is_deleted = 0
+    </select>
+
+    <insert id="insertSelective" parameterType="ltd.newbee.mall.entity.NewBeeMallShoppingCartItem">
+        insert into tb_newbee_mall_shopping_cart_item
+        <trim prefix="(" suffixOverrides="," suffix=")">
+            <if test="cartItemId != null">
+                cart_item_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="goodsId != null">
+                goods_id,
+            </if>
+            <if test="goodsCount != null">
+                goods_count,
+            </if>
+            <if test="isDeleted != null">
+                is_deleted,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cartItemId != null">
+                #{cartItemId,jdbcType=BIGINT},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="goodsId != null">
+                #{goodsId,jdbcType=BIGINT},
+            </if>
+            <if test="goodsCount != null">
+                #{goodsCount,jdbcType=INTEGER},
+            </if>
+            <if test="isDeleted != null">
+                #{isDeleted,jdbcType=TINYINT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="selectByUserId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from tb_newbee_mall_shopping_cart_item
+        where user_id = #{newBeeMallUserId,jdbcType=BIGINT} and is_deleted = 0
+        limit #{number}
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from tb_newbee_mall_shopping_cart_item
+        where cart_item_id = #{cartItemId,jdbcType=BIGINT} and is_deleted = 0
+    </select>
+
+    <update id="updateByPrimaryKeySelective" parameterType="ltd.newbee.mall.entity.NewBeeMallShoppingCartItem">
+        update tb_newbee_mall_shopping_cart_item
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="goodsId != null">
+                goods_id = #{goodsId,jdbcType=BIGINT},
+            </if>
+            <if test="goodsCount != null">
+                goods_count = #{goodsCount,jdbcType=INTEGER},
+            </if>
+            <if test="isDeleted != null">
+                is_deleted = #{isDeleted,jdbcType=TINYINT},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where cart_item_id = #{cartItemId,jdbcType=BIGINT}
+    </update>
+
+    <update id="deleteByPrimaryKey" parameterType="Long">
+        update tb_newbee_mall_shopping_cart_item set is_deleted = 1
+        where cart_item_id = #{cartItemId,jdbcType=BIGINT} and is_deleted = 0
+    </update>
+
+    <update id="deleteBatch">
+        update tb_newbee_mall_shopping_cart_item
+        set is_deleted = 1 where cart_item_id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+</mapper>

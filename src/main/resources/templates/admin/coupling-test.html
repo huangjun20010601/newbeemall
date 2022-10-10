@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<header th:replace="admin/header::header-fragment"></header>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+<!--    引入页面头header-fragment-->
+    <div th:replace="admin/header::header-nav"></div>
+<!--    引入页面栏sidebar-fragment-->
+    <div th:replace="admin/sidebar::sidebar-fragment(${path})"></div>
+    <div class="content-wrapper">
+        <div class="content-header">
+            <div class="container-fluid">
+            </div>
+        </div>
+        <div class="content">
+            <div class="container-fluid">
+                <div class="card card-primary card-outline">
+                    <div class="card-header">
+                        <h3 class="card-title">分类三级联动</h3>
+                    </div><!-- /.card-header -->
+                    <div class="card-body">
+                        <form id="coupling-test" onsubmit="return false;">
+                            <div class="form-group" style="display: flex">
+                                <label class="control-label">请选择分类:&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                <select class="form-control col-sm-3" id="levelOne" data-placeholder="请选择分类...">
+                                    <th:block th:unless="${null == firstLevelCategories}"><!--非空判断-->
+                                        <th:block th:each="c : ${firstLevelCategories}"><!--循环列表-->
+                                            <option th:value="${c.categoryId}" th:text="${c.categoryName}"></option>
+                                        </th:block>
+                                    </th:block>
+                                </select>&nbsp;
+                                <select class="form-control col-sm-3" id="levelTwo" data-placeholder="请选择分类...">
+                                    <th:block th:unless="${null == secondLevelCategories}"><!--非空判断-->
+                                        <th:block th:each="c : ${secondLevelCategories}"><!--循环列表-->
+                                            <option th:value="${c.categoryId}" th:text="${c.categoryName}"></option>
+                                        </th:block>
+                                    </th:block>
+                                </select>&nbsp;
+                                <select class="form-control col-sm-3" id="levelThree" data-placeholder="请选择分类...">
+                                    <th:block th:unless="${null == thirdLevelCategories}"><!--非空判断-->
+                                        <th:block th:each="c : ${thirdLevelCategories}"><!--循环列表-->
+                                            <option th:value="${c.categoryId}" th:text="${c.categoryName}"></option>
+                                        </th:block>
+                                    </th:block>
+                                </select>
+                            </div>
+                        </form>
+                    </div><!-- /.card-body -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--    引入页脚footer-fragment-->
+    <div th:replace="admin/footer::footer-fragment"></div>
+</div>
+<!-- jQuery -->
+<script th:src="@{/admin/plugins/jquery/jquery.min.js}"></script>
+<!-- jQuery UI 1.11.4 -->
+<script th:src="@{/admin/plugins/jquery-ui/jquery-ui.min.js}"></script>
+<!-- Bootstrap 4 -->
+<script th:src="@{/admin/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<!-- AdminLTE App -->
+<script th:src="@{/admin/dist/js/adminlte.js}"></script>
+<script>
+    $(function (){
+        $("#levelOne").on("change",function (){
+            $.ajax({
+                url:"/admin/categories/listForSelect?categoryId="+$(this).val(),
+                type:"GET",
+                success:function (result){
+                    if (result.resultCode == 200){
+                        var levelTwoSelect = "";
+                        var secondLevelCategories = result.data.secondLevelCategories;
+                        var length2 = secondLevelCategories.length;
+                        for (var i = 0;i < length2 ; i++){
+                            levelTwoSelect+="<option value=\""+secondLevelCategories[i].categoryId+"\">"+secondLevelCategories[i].categoryName+"</option>";
+                        }
+                        $("#levelTwo").html(levelTwoSelect);
+                        var levelThreeSelect = "";
+                        var thirdLevelCategories = result.data.thirdLevelCategories;
+                        var length3 = thirdLevelCategories.length;
+                        for (var i = 0;i < length3; i++){
+                            levelThreeSelect += "<option value=\""+thirdLevelCategories[i].categoryId+"\">"+thirdLevelCategories[i].categoryName+"</option>";
+                        }
+                        $("#levelThree").html(levelThreeSelect);
+                    }else {
+                        swal(result.message,{
+                            icon:"error"
+                        });
+                    }
+                },
+                error:function (){
+                    swal("操作失败",{
+                        icon:"error"
+                    });
+                }
+            })
+        })
+
+        $("#levelTwo").on("change",function (){
+            $.ajax({
+                url:"/admin/categories/listForSelect?categoryId="+$(this).val(),
+                type: "GET",
+                success:function (result){
+                    if (result.resultCode == 200){
+                        var levelThreeSelect = "";
+                        var thirdLevelCategories = result.data.thirdLevelCategories;
+                        var length = thirdLevelCategories.length;
+                        for (var i = 0;i < length ;i++){
+                            levelThreeSelect += "<option value=\""+thirdLevelCategories[i].categoryId+"\">"+thirdLevelCategories[i].categoryName+"</option>";
+                        }
+                        $("#levelThree").html(levelThreeSelect);
+                    }else {
+                        swal(result.message,{
+                            icon:"error"
+                        });
+                    }
+                },
+                error:function (){
+                    swal("操作失败",{
+                        icon:"error"
+                    });
+                }
+            })
+        })
+    })
+</script>
+</body>
+</html>

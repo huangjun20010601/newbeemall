@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!--引入head部分-->
+<head th:replace="mall/header::head-fragment('NewBee 商城-首页','index')"></head>
+<body>
+    <!--引入导航栏和搜索框-->
+    <header th:replace="mall/header::header-fragment"></header>
+    <content th:id="content">
+        <nav th:replace="mall/header::nav-fragment"></nav>
+        <div id="banner">
+            <div class="all-sort-list">
+                <th:block th:each="category : ${categories}">
+                    <div class="item">
+                        <h3><span>·</span><a href="##"><th:block th:text="${category.categoryName}"></th:block></a></h3>
+                        <div class="item-list clearfix">
+                            <div class="subitem">
+                                <th:block th:each="secondLevelCategory : ${category.secondLevelCategoryVOS}">
+                                    <dl class="fore1">
+                                        <dt><a href="#"><th:block th:text="${secondLevelCategory.categoryName}"></th:block></a> </dt>
+                                        <dd>
+                                            <th:block th:each="thirdLevelCategory : ${secondLevelCategory.thirdLevelCategoryVOS}">
+                                                <em><a th:href="@{'/search?goodsCategoryId='+${thirdLevelCategory.categoryId}}">
+                                                    <th:block th:text="${thirdLevelCategory.categoryName}"></th:block>
+                                                </a></em>
+                                            </th:block>
+                                        </dd>
+                                    </dl>
+                                </th:block>
+                            </div>
+                        </div>
+                    </div>
+                </th:block>
+            </div>
+            <!-- Swiper -->
+            <div class="swiper-container fl">
+                <div class="swiper-wrapper">
+                    <th:block th:unless="${#lists.isEmpty(carousels)}">
+                        <th:block th:each="carousel : ${carousels}">
+                            <div class="swiper-slide">
+                                <a th:href="@{${carousel.redirectUrl}}">
+                                    <img th:src="@{${carousel.carouselUrl}}" alt="">
+                                </a>
+                            </div>
+                        </th:block>
+                    </th:block>
+                </div>
+                <!-- Add Arrows -->
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+                <!-- Add Pagination -->
+                <div class="swiper-pagination"></div>
+            </div>
+        </div>
+        <div id="sub_banner">
+            <th:block th:unless="${#lists.isEmpty(hotGoodses)}">
+                <th:block th:each="hotGoodse : ${hotGoodses}">
+                    <div class="hot-image">
+                        <a th:href="@{'/goods/detail/'+ ${hotGoodse.goodsId}}">
+                            <img th:src="@{${hotGoodse.goodsCoverImg}}" th:alt="${hotGoodse.goodsName}">
+                        </a>
+                    </div>
+                </th:block>
+            </th:block>
+        </div>
+        <div id="flash">
+            <h2>新品上线</h2>
+            <ul>
+                <th:block th:unless="${#lists.isEmpty(newGoodses)}">
+                    <th:block th:each="newGoods : ${newGoodses}">
+                        <li>
+                            <a th:href="@{'/goods/detail/'+${newGoods.goodsId}}">
+                                <img th:src="@{${newGoods.goodsCoverImg}}" th:alt="${newGoods.goodsName}">
+                                <p class="name" th:text="${newGoods.goodsName}">NewBeeMall</p>
+                                <p class="discount" th:text="${newGoods.goodsIntro}">NewBeeMall</p>
+                                <p class="item_price" th:text="${newGoods.sellingPrice}">NewBeeMall</p>
+                            </a>
+                        </li>
+                    </th:block>
+                </th:block>
+            </ul>
+        </div>
+        <div id="recommend">
+            <h2>为你推荐</h2>
+            <a href="##" class="more">查看更多>></a>
+            <ul>
+                <th:block th:unless="${#lists.isEmpty(recommendGoodses)}">
+                    <th:block th:each="recommendGoods : ${recommendGoodses}">
+                        <li>
+                            <a th:href="@{'/goods/detail/'+${recommendGoods.goodsId}}">
+                                <div class="info discount" th:text="${recommendGoods.tag}">推荐</div>
+                                <img th:src="@{${recommendGoods.goodsCoverImg}}" th:alt="${recommendGoods.goodsName}">
+                                <p class="name" th:text="${recommendGoods.goodsName}">NewBeeMall</p>
+                                <p class="item_price" th:text="${recommendGoods.sellingPrice}">NewBeeMall</p>
+                                <p class="counter">猜你喜欢</p>
+                                <div class="comment">
+                                    <p>新蜂精选</p>
+                                    <p>好物也可以不贵</p>
+                                </div>
+                            </a>
+                        </li>
+                    </th:block>
+                </th:block>
+            </ul>
+        </div>
+    </content>
+
+
+    <!--引入页脚footer-fragment-->
+    <div th:replace="mall/footer::footer-fragment"></div>
+<!--    jqquery-->
+<script th:src="@{/mall/js/jquery-1.8.0.js}"></script>
+<!--Bootstrap4-->
+<script th:src="@{/mall/js/swiper-bundle.min.js}"></script>
+<script th:src="@{/mall/js/index.js}"></script>
+<script th:src="@{/mall/js/search.js}"></script>
+</body>
+</html>
+
+
+
